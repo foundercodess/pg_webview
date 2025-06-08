@@ -16,10 +16,10 @@ description: A Flutter package for handling payment webviews with custom callbac
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 0.1.0
-homepage: https://github.com/yourusername/payment_webview
-repository: https://github.com/yourusername/payment_webview
-issue_tracker: https://github.com/yourusername/payment_webview/issues
+version: 0.1.1
+homepage: https://github.com/YOUR_USERNAME/payment_webview
+repository: https://github.com/YOUR_USERNAME/payment_webview
+issue_tracker: https://github.com/YOUR_USERNAME/payment_webview/issues
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

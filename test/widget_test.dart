@@ -1,3 +1,4 @@
+// test/widget_test.dart
 // This is a basic Flutter widget test.
 //
 // To perform an interaction with a widget in your test, use the WidgetTester
@@ -7,13 +8,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:payment_webview/payment_webview.dart';
 
-import 'package:customized_webview/main.dart';
+// import 'package:customized_webview/main.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget( MyApp());
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
@@ -26,5 +28,24 @@ void main() {
     // Verify that our counter has incremented.
     expect(find.text('0'), findsNothing);
     expect(find.text('1'), findsOneWidget);
+  });
+
+  testWidgets('PaymentWebView smoke test', (WidgetTester tester) async {
+    // Build our widget and trigger a frame.
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: PaymentWebView(
+            url: 'https://example.com',
+            onPaymentComplete: (status, transactionId, amount) {
+              // Test callback
+            },
+          ),
+        ),
+      ),
+    );
+
+    // Verify that the WebView is present
+    expect(find.byType(PaymentWebView), findsOneWidget);
   });
 }

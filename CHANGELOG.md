@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.1
+
+* Simplified PaymentWebView to handle direct URL input
+* Removed complex configuration in favor of direct URL handling
+* Improved URL pattern matching for success/failure states
+* Made onPaymentComplete callback optional
+
 ## 0.1.0
 
 * Initial release
