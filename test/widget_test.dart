@@ -9,6 +9,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:payment_webview/payment_webview.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 // import 'package:customized_webview/main.dart';
 
@@ -31,21 +32,56 @@ void main() {
   });
 
   testWidgets('PaymentWebView smoke test', (WidgetTester tester) async {
-    // Build our widget and trigger a frame.
+    // Build our app and trigger a frame.
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
           body: PaymentWebView(
             url: 'https://example.com',
-            onPaymentComplete: (status, transactionId, amount) {
-              // Test callback
+            onError: (error) {
+              // Test error handling
+              expect(error, isA<String>());
             },
           ),
         ),
       ),
     );
 
-    // Verify that the WebView is present
+    // Verify that the WebView is rendered
     expect(find.byType(PaymentWebView), findsOneWidget);
+    expect(find.byType(WebViewWidget), findsOneWidget);
+  });
+
+  testWidgets('PaymentWebView with custom loading widget', (WidgetTester tester) async {
+    final customLoadingWidget = Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: const [
+          CircularProgressIndicator(),
+          SizedBox(height: 16),
+          Text('Loading...'),
+        ],
+      ),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: PaymentWebView(
+            url: 'https://example.com',
+            loadingWidget: customLoadingWidget,
+            onError: (error) {
+              // Test error handling
+              expect(error, isA<String>());
+            },
+          ),
+        ),
+      ),
+    );
+
+    // Verify that the custom loading widget is rendered initially
+    expect(find.byType(PaymentWebView), findsOneWidget);
+    expect(find.byType(WebViewWidget), findsOneWidget);
+    expect(find.text('Loading...'), findsOneWidget);
   });
 }
