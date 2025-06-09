@@ -1,17 +1,16 @@
 # Payment WebView
 
-A Flutter package for handling payment webviews with custom callbacks. This package provides a simple way to integrate payment webviews into your Flutter app with support for custom headers, query parameters, and payment result handling.
+A Flutter plugin for handling webviews with download and external app support. This plugin provides a simple way to integrate webviews into your Flutter app with support for file downloads, UPI payments, and external app launches.
 
 ## Features
 
-- Simple API for integrating payment webviews
-- Support for custom headers and query parameters
-- Configurable success and failure URL patterns
-- Customizable loading indicator
-- Type-safe payment results
-- JSON serialization support
-- Error handling
-- Page load status callbacks
+- 🔄 General webview functionality
+- 📥 File download support (PDF, DOC, XLS, ZIP, etc.)
+- 💳 UPI payment handling
+- 🔗 External app launching
+- ⚡ Loading state management
+- 🚫 Error handling
+- 🎨 Customizable loading widget
 
 ## Installation
 
@@ -19,174 +18,98 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  payment_webview: ^0.1.0
+  payment_webview: ^0.0.1
 ```
 
 ## Usage
 
-### Basic Usage
-
 ```dart
-import 'package:flutter/material.dart';
 import 'package:payment_webview/payment_webview.dart';
 
-class PaymentScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Payment')),
-      body: PaymentWebView(
-        config: PaymentConfig(
-          baseUrl: 'https://your-payment-gateway.com/pay',
-          queryParams: {
-            'amount': '100.00',
-            'currency': 'USD',
-            'order_id': '123456',
-          },
-        ),
-        onPaymentComplete: (result) {
-          if (result.status == 'success') {
-            print('Payment successful!');
-            print('Transaction ID: ${result.transactionId}');
-            print('Amount: ${result.amount}');
-          } else {
-            print('Payment failed!');
-          }
-        },
-      ),
-    );
-  }
-}
+// Inside your widget
+PaymentWebView(
+  url: 'https://your-url.com',
+  onError: (error) {
+    print('Error: $error');
+  },
+  loadingWidget: CircularProgressIndicator(), // Optional custom loading widget
+)
 ```
 
-### Advanced Usage
+## Features in Detail
+
+### File Downloads
+The plugin automatically handles file downloads for common file types:
+- PDF (.pdf)
+- Word documents (.doc, .docx)
+- Excel spreadsheets (.xls, .xlsx)
+- Archives (.zip, .rar)
+- Any URL containing 'download'
+
+Files are saved to:
+- Android: `/storage/emulated/0/Download`
+- iOS: Application Documents directory
+
+### UPI Payments
+UPI URLs are automatically detected and launched in the appropriate UPI app:
+- Supports `upi://` scheme
+- Supports `intent://` scheme for Android
+
+### External Links
+External links are opened in the device's default browser or appropriate app.
+
+## Error Handling
+
+The plugin provides error handling through the `onError` callback:
 
 ```dart
 PaymentWebView(
-  config: PaymentConfig(
-    baseUrl: 'https://your-payment-gateway.com/pay',
-    successUrlPattern: 'payment_success',
-    failureUrlPattern: 'payment_failed',
-    headers: {
-      'Authorization': 'Bearer your-token',
-      'Content-Type': 'application/json',
-    },
-    queryParams: {
-      'amount': '100.00',
-      'currency': 'USD',
-      'order_id': '123456',
-      'customer_id': 'CUST123',
-    },
-  ),
-  onPaymentComplete: (result) {
-    // Handle payment result
-  },
+  url: 'https://your-url.com',
   onError: (error) {
-    // Handle errors
+    // Handle errors like:
+    // - Storage permission denied
+    // - Download failures
+    // - Web resource errors
+    print('Error: $error');
   },
-  onPageStarted: () {
-    // Page started loading
-  },
-  onPageFinished: () {
-    // Page finished loading
-  },
-  loadingWidget: CircularProgressIndicator(
-    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+)
+```
+
+## Customization
+
+### Loading Widget
+You can customize the loading indicator:
+
+```dart
+PaymentWebView(
+  url: 'https://your-url.com',
+  loadingWidget: Center(
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        CircularProgressIndicator(),
+        SizedBox(height: 16),
+        Text('Loading...'),
+      ],
+    ),
   ),
 )
 ```
 
-### Payment Result Handling
-
-```dart
-class PaymentResultHandler {
-  static void handlePaymentResult(BuildContext context, PaymentResult result) {
-    switch (result.status) {
-      case 'success':
-        _handleSuccess(context, result);
-        break;
-      case 'failed':
-        _handleFailure(context, result);
-        break;
-      default:
-        _handleUnknown(context, result);
-    }
-  }
-
-  static void _handleSuccess(BuildContext context, PaymentResult result) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Payment Successful'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Transaction ID: ${result.transactionId}'),
-            Text('Amount: \$${result.amount}'),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ... other handler methods
-}
-```
-
-## API Reference
-
-### PaymentWebView
-
-A widget that displays a payment webview with custom callbacks.
-
-#### Properties
-
-- `config` (required): The payment configuration
-- `onPaymentComplete` (required): Callback when payment is completed
-- `onError`: Callback when there's an error
-- `onPageStarted`: Callback when the page starts loading
-- `onPageFinished`: Callback when the page finishes loading
-- `loadingWidget`: Custom loading widget
-
-### PaymentConfig
-
-Configuration for the payment webview.
-
-#### Properties
-
-- `baseUrl` (required): The base URL for the payment gateway
-- `successUrlPattern`: The success URL pattern to match
-- `failureUrlPattern`: The failure URL pattern to match
-- `headers`: Additional headers to be sent with the request
-- `queryParams`: Additional query parameters to be added to the URL
-
-### PaymentResult
-
-The result of a payment transaction.
-
-#### Properties
-
-- `status`: The status of the payment ('success' or 'failed')
-- `transactionId`: The transaction ID if available
-- `amount`: The payment amount if available
-
 ## Platform Support
 
-Currently supports:
 - Android
 - iOS
 
-## Contributing
+## Requirements
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+- Flutter 3.0.0 or higher
+- Dart SDK 2.19.0 or higher
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.

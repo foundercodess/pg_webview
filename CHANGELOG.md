@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.2
+
+* Fixed test file issues
+* Updated package structure
+* Improved documentation
+
 ## 0.1.1
 
 * Simplified PaymentWebView to handle direct URL input
